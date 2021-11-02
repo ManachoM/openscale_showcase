@@ -14,6 +14,7 @@
 <script>
 import HeartDiseaseForm from "@/components/HeartDiseaseForm";
 import GermanCreditScoreForm from "@/components/GermanCreditScoreForm";
+
 export default {
   components: {GermanCreditScoreForm, HeartDiseaseForm},
   name: "ModelSelector"
