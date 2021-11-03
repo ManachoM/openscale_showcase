@@ -62,10 +62,11 @@
                      v-model="thalac"
                      ></cv-number-input>
     <br>
-    <cv-checkbox value="false"
+    <cv-checkbox
                   id = "angina"
+                 :value="exang"
                   label="Angina producida por ejercicio"
-                  v-model="exang"></cv-checkbox>
+                  ></cv-checkbox>
     <br>
     <cv-number-input label="Depresión ST inducida por ejercicio relativo al reposo"
                      value="0"
@@ -77,7 +78,14 @@
                      ></cv-number-input>
     <br>
     <cv-button type="submit">Predecir</cv-button>
+    <div>
+      <cv-data-table :columns="columns" :data="data" auto-width/>
+    </div>
+
   </cv-form>
+
+
+
 </template>
 
 <script>
@@ -96,8 +104,10 @@ export default {
           fbs: 0,
           restecg: 1,
           thalac: 60,
-          exang: false,
-          oldpeak: 0
+          exang: "false",
+          oldpeak: 0,
+          columns: [""],
+          data: []
         }
       },
       methods:{
@@ -112,22 +122,23 @@ export default {
               cp: elementos.tipo.value,
               trestbps: elementos.presion.value,
               chol: elementos.col.value,
-              fbs: elementos.gluc.getAttribute("aria-checked") == "false" 
-                  || elementos.gluc.getAttribute("aria-checked") == "0"  ? 0 : 1,
+              fbs: elementos.gluc.getAttribute("aria-checked") === "false"
+                  || elementos.gluc.getAttribute("aria-checked") === "0"  ? 0 : 1,
               restecg: elementos.resElec.value,
               thalac: elementos.hr.value,
-              exang: elementos.angina.getAttribute("aria-checked") == "false" 
-                    || elementos.angina.getAttribute("aria-checked") == "0"  ? 0 : 1,
+              exang: elementos.angina.getAttribute("aria-checked") === "false"
+                    || elementos.angina.getAttribute("aria-checked") === "0"  ? 0 : 1,
               oldpeak: elementos.dep.value
               }
             }
           )
 
           .then( async (response) => {
-            let JSONdata = await Object.values(response.data);
-
-            console.log("RESPUESTA: "+ JSONdata);
-
+            // let JSONdata = Object.values(response.data);
+            let a = JSON.parse(response.data);
+            console.log("RESPUESTA: "+ a);
+            this.data = a.predictions[0].values;
+            this.columns = a.predictions[0].fields;
             /* Llega con el siguiente formato
               RESPUESTA: {
                 "predictions": [{
