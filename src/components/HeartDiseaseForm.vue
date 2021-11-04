@@ -64,8 +64,8 @@
     <br>
     <cv-checkbox
                   id = "angina"
-                 :value="exang"
                   label="Angina producida por ejercicio"
+                  v-model="exang"
                   ></cv-checkbox>
     <br>
     <cv-number-input label="Depresión ST inducida por ejercicio relativo al reposo"
@@ -83,9 +83,6 @@
     </div>
 
   </cv-form>
-
-
-
 </template>
 
 <script>
@@ -101,10 +98,10 @@ export default {
           cp: 0,
           trestbps: 90,
           chol: 120,
-          fbs: 0,
+          fbs: false,
           restecg: 1,
           thalac: 60,
-          exang: "false",
+          exang: false,
           oldpeak: 0,
           columns: [""],
           data: []
@@ -134,21 +131,11 @@ export default {
           )
 
           .then( async (response) => {
-            // let JSONdata = Object.values(response.data);
-            let a = JSON.parse(response.data);
-            console.log("RESPUESTA: "+ a);
-            this.data = a.predictions[0].values;
-            this.columns = a.predictions[0].fields;
-            /* Llega con el siguiente formato
-              RESPUESTA: {
-                "predictions": [{
-                  "fields": ["prediction", "probability"],
-                  "values": [[0, [0.516032063816546, 0.483967936183454]]]
-                }]
-              }
-            */
-          })
+            let JSONdata = JSON.parse(Object.values(response.data)).predictions[0];
 
+            this.data = [[JSONdata.values[0][1][0],JSONdata.values[0][1][1]]];
+            this.columns = ["Prediccion", "Probabilidad"];
+          })
           .catch(error => {
             console.error(error);
           });
